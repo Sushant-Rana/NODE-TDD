@@ -10,25 +10,28 @@ const samplejoke = 'HAHA'
 
 describe('JOKES TEST', () => {
   it('Should return 200 status code: Success case', async () => {
-    const res = await request(app).get('/test/getRandomJoke')
-    expect(res.statusCode).toBe(200)
+    const response = await request(app).get('/test/getRandomJoke')
+    expect(response.statusCode).toBe(200)
   })
 
   it('getRandomJoke,should returnt eh same joke', async () => {
     axios.mockImplementation(() =>
       Promise.resolve({ data: { joke: samplejoke, error: false } })
     )
-    const res = await request(app).get('/test/getRandomJoke')
-    expect(res.text).toBe(samplejoke)
+    const response = await request(app).get('/test/getRandomJoke')
+    expect(response.text).toBe(samplejoke)
   })
 
   it(' securedRandomJoke ,BYPASSING MIDDLEWARE', async () => {
     axios.mockImplementation(() =>
       Promise.resolve({ data: { joke: samplejoke, error: false } })
     )
-    const res = await request(app)
+    const response = await request(app)
       .get('/test/securedRandomJoke')
       .query({ isSuperUser: 1 })
-    expect(res.text).toBe(samplejoke)
+    expect(response.text).toBe(samplejoke)
+
+    const responseult = await request(server).get('/test/securedRandomJoke').query({ isSuperUser: 0 })
+    expect(responseult.text).toBe('Access Denied')
   })
 })
